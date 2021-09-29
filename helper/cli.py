@@ -1,13 +1,8 @@
 # cli.py
 from mnemonic import Mnemonic
 import click
-import sys
 import os
 import glob
-
-
-sys.path.append('my/path/to/module/folder')
-
 
 @click.command()
 def main():

@@ -34,8 +34,10 @@ def main():
 
         os.system('./lukso-deposit-cli existing-mnemonic --folder '+ folder +' --num_validators 10 --validator_start_index 0 --keystore_password 12345678 --chain '+network+' --mnemonic "' + words + '" >/dev/null'),
 
-        commandStart = "kubectl create secret generic validator-keys-node-" + str(x) + " --from-file="
-        fromFile = ' --from-file='.join(glob.iglob(folder +'/validator_keys/*.json'))
+        createWallets(network, str(x))
+
+        commandStart = "kubectl create secret generic validator-keys-node-" + str(x)
+        fromFile = ' --from-file='+folder +'/wallet/direct/accounts/all-accounts.keystore.json'
         commandEnd = " --dry-run=client -o yaml > "+ folder + "/validator-keys-node-" + str(x) + ".yaml -n " + namespace
 
         os.system(commandStart + fromFile + commandEnd)
@@ -52,13 +54,16 @@ def merge_JsonFiles(filename):
 
 def concat():
     depositDataFiles = []
-    # root_dir needs a trailing slash (i.e. /root/dir/)
     for filename in glob.iglob('l15-dev/**/*deposit_data*.json', recursive=True):
         depositDataFiles.append(filename)
 
     depositDataFiles.sort()
     merge_JsonFiles(depositDataFiles)
 
+def createWallets(network, index):
+
+    os.system('/usr/local/bin/lukso-validator accounts import --keys-dir ./l15-dev/node-'+index+'/validator_keys --wallet-dir ./l15-dev/node-'+index+'/wallet --account-password-file ./keyspw.txt --wallet-password-file ./walletpw.txt'),
+
 if __name__ == "__main__":
-    # main()
-    concat()
+    main()
+    # concat()

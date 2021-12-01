@@ -41,6 +41,8 @@ def main():
 
         os.system(commandStart + fromFile + commandEnd)
         os.system("kubeseal --cert pub-sealed-secrets.pem --format yaml < "+ folder + "/validator-keys-node-" + str(x) + ".yaml > "+ network + "/sealed-secrets/validator-keys-node-" + str(x) + "-sealed.yaml -n " + namespace)
+        
+    concat()
 
 def merge_JsonFiles(filename):
         result = list()
@@ -50,6 +52,7 @@ def merge_JsonFiles(filename):
 
         with open('deposit_data.json', 'w') as output_file:
             json.dump(result, output_file)
+
 
 def concat():
     depositDataFiles = []
@@ -65,4 +68,3 @@ def createWallets(network, index):
 
 if __name__ == "__main__":
     main()
-    # concat()

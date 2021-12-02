@@ -33,15 +33,17 @@ def main():
         os.mkdir(config.network)
         os.mkdir(config.network + "/sealed-secrets")
     except FileExistsError:
-        print(f'\033[91mThe folder "{os.getcwd()}/{config.network}" already exists. \nPlease make a backup and delete the folder, then try again.')
+        print(
+            f'\033[91mThe folder "{os.getcwd()}/{config.network}" already exists. \nPlease make a backup and delete the folder, then try again.'
+        )
         return
 
-    print(CMD_COLOR+"Download lukso-deposit-cli")
+    print(CMD_COLOR + "Download lukso-deposit-cli")
     wget.download(DEPOSIT_CLI_URL)
     os.system(f"mv {config.depositCliName} lukso-deposit-cli >/dev/null")
     os.system(f"chmod +x lukso-deposit-cli >/dev/null")
-    print(OK_COLOR+"\nSuccessful\n")
-    print(CMD_COLOR+"Update Sealed Secrets Public Key...")
+    print(OK_COLOR + "\nSuccessful\n")
+    print(CMD_COLOR + "Update Sealed Secrets Public Key...")
 
     seal_secrets_cmd = """\
         kubeseal 
@@ -53,7 +55,7 @@ def main():
     """
     excecute_command(seal_secrets_cmd)
 
-    print(CMD_COLOR+"Starting key generation")
+    print(CMD_COLOR + "Starting key generation")
     for nodeNumber in range(config.nodes):
         print("\033[1mNode " + str(nodeNumber) + ":")
         folder, words = create_mnemonic(config.network, str(nodeNumber))
@@ -86,7 +88,7 @@ def concat():
 
 
 def create_wallets(network, index):
-    print(CMD_COLOR+"Generating Wallet...")
+    print(CMD_COLOR + "Generating Wallet...")
     cmd = """\
         /usr/local/bin/lukso-validator 
             accounts import
@@ -103,7 +105,7 @@ def create_wallets(network, index):
 
 
 def create_mnemonic(network, nodeNumber):
-    print(CMD_COLOR+"  Generating Mnemonic...")
+    print(CMD_COLOR + "  Generating Mnemonic...")
     mnemo = Mnemonic("english")
     words = mnemo.generate(strength=256)
 
@@ -111,13 +113,13 @@ def create_mnemonic(network, nodeNumber):
     os.mkdir(folder)
     f = open(folder + "/mnemonic", "x")
     f.write(words)
-    print(OK_COLOR+"    Successful\n")
+    print(OK_COLOR + "    Successful\n")
 
     return folder, words
 
 
 def create_keys(folder, network, words, validatorsPerNode):
-    print(CMD_COLOR+"  Generating Keys...")
+    print(CMD_COLOR + "  Generating Keys...")
     cmd = """\
         ./lukso-deposit-cli 
             existing-mnemonic 
@@ -136,7 +138,7 @@ def create_keys(folder, network, words, validatorsPerNode):
 
 
 def create_plain_k8s_secrets(folder, namespace, nodeNumber):
-    print(CMD_COLOR+"  Generating plain K8S secrets...")
+    print(CMD_COLOR + "  Generating plain K8S secrets...")
     cmd = """\
         kubectl create secret generic validator-keys-node-{nodeNumber}
             --from-file={folder}/wallet/direct/accounts/all-accounts.keystore.json
@@ -151,7 +153,7 @@ def create_plain_k8s_secrets(folder, namespace, nodeNumber):
 
 
 def seal_secrets(folder, network, namespace, nodeNumber):
-    print(CMD_COLOR+"  Sealing the Secrets...")
+    print(CMD_COLOR + "  Sealing the Secrets...")
     cmd = """\
         kubeseal 
         --cert pub-sealed-secrets.pem 
@@ -171,7 +173,7 @@ def excecute_command(cmd):
     cmd = re.sub(r"( )( *)", r"\g<1>", cmd)
     cmd = re.sub(r"\n", "", cmd)
     os.system(cmd)
-    print(OK_COLOR+"    Successful\n")
+    print(OK_COLOR + "    Successful\n")
 
 
 if __name__ == "__main__":

@@ -23,7 +23,6 @@ def main():
         "validatorsPerNode": 10,
         "namespace": "l15-dev",
         "depositCliName": DEPOSIT_CLI_URL.split("/")[-1],
-        "folder": "",
     }
 
     config = SimpleNamespace(**config_dict)
@@ -48,6 +47,7 @@ def main():
     seal_secrets_cmd = """\
         kubeseal 
             --fetch-cert 
+            --insecure-skip-tls-verify
             --controller-name=sealed-secrets 
             --controller-namespace=sealed-secrets 
             > pub-sealed-secrets.pem 

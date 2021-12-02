@@ -1,5 +1,7 @@
 # Usage
 
+- Step0: Install Dependencies
+  - `pipenv install`
 - Step1: create these two files
   - `keys-pw.txt`
   - `password.txt`
